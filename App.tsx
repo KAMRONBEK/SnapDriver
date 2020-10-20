@@ -3,10 +3,11 @@ import {Provider} from 'react-redux';
 import AppNavigator from './src/navigation/AppNavigator';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-
+import invokeApp from 'react-native-invoke-app';
+import LaunchApplication from "react-native-bring-foreground";
 import createStore from './src/store/createStore';
 import api from './src/services/api';
-import {Linking} from 'react-native';
+import {Linking, AppRegistry} from 'react-native';
 
 const {store, persistor} = createStore();
 
@@ -34,7 +35,9 @@ const useInitialURL = () => {
     return {url, processing};
 };
 
+
 const App = () => {
+
     useEffect(() => {
         api.setToken(store);
         RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
@@ -55,6 +58,7 @@ const App = () => {
                 //  - ERR01 : If the Settings change are unavailable
                 //  - ERR02 : If the popup has failed to open
             });
+
     }, []);
 
     const {url: initialUrl, processing} = useInitialURL();
@@ -65,7 +69,7 @@ const App = () => {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-                <AppNavigator />
+                <AppNavigator/>
             </PersistGate>
         </Provider>
     );

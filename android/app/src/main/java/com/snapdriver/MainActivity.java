@@ -1,9 +1,11 @@
 package com.snapdriver;
 
+import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+import com.codegulp.invokeapp.RNInvokeApp;
 
 public class MainActivity extends ReactActivity {
 
@@ -14,6 +16,12 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "snapDriver";
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    RNInvokeApp.sendEvent();
   }
 
   @Override

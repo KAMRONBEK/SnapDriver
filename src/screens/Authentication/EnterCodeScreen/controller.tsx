@@ -22,13 +22,13 @@ interface IProps {
 }
 
 const EnterCodeScreenController = ({
-    route,
-    VerifyCode,
-    ResendCode,
-    GetProfile,
-    GetCar,
-    SendPush,
-}: IProps) => {
+                                       route,
+                                       VerifyCode,
+                                       ResendCode,
+                                       GetProfile,
+                                       GetCar,
+                                       SendPush,
+                                   }: IProps) => {
     const navigation = useNavigation();
     const [error, setError] = useState(false);
     const [fcmToken, setFcmToken] = useState(null);
@@ -53,7 +53,7 @@ const EnterCodeScreenController = ({
                 setFcmToken(data.token);
             },
             onNotification: (notification: any) => {
-                console.log('Background ');
+                console.log(notification)
                 if (notification.title === 'message') {
                     SendPush({
                         id: notification.data.notification_id,
@@ -72,6 +72,9 @@ const EnterCodeScreenController = ({
             },
             popInitialNotification: true,
             requestPermissions: true,
+            onRemoteFetch: notificationData => {
+                console.log({notificationData})
+            }
         });
     }, []);
 

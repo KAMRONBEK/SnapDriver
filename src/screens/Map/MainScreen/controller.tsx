@@ -1,13 +1,15 @@
 import colors from '@constants/colors';
 import SCREENS from '@constants/screens';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import BackgroundTimer from 'react-native-background-timer';
+
 import NetInfo from '@react-native-community/netinfo';
 import {StackNavigationProp} from '@react-navigation/stack';
 import IAction from '@store/types/IAction';
 import React, {useEffect, useState} from 'react';
-import {Alert, Linking, StatusBar} from 'react-native';
-import LaunchApplication from 'react-native-bring-foreground';
+import {Alert, StatusBar, Linking} from 'react-native';
 import MainScreenView from './view';
+import messaging from "@react-native-firebase/messaging";
 
 const PushNotification = require('react-native-push-notification');
 
@@ -26,20 +28,21 @@ interface IProps {
     SendPush: any;
 }
 
-const MainScreenController = ({
-    navigation,
-    driver,
-    SetDriverStatusOffline,
-    SetDriverStatusOnline,
-    NewOrder,
-    newOrder,
-    SetNetConnection,
-    isNetConnected,
-    car,
-    UpdateLocation,
-    GetProfile,
-    SendPush,
-}: IProps) => {
+const MainScreenController = (
+    {
+        navigation,
+        driver,
+        SetDriverStatusOffline,
+        SetDriverStatusOnline,
+        NewOrder,
+        newOrder,
+        SetNetConnection,
+        isNetConnected,
+        car,
+        UpdateLocation,
+        GetProfile,
+        SendPush,
+    }: IProps) => {
     const [showTariff, setShowTariff] = useState(false);
     const [intervalId, setIntervalId] = useState<any>();
 
@@ -48,9 +51,9 @@ const MainScreenController = ({
             desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
             stationaryRadius: 50,
             distanceFilter: 50,
-            notificationTitle: 'Background tracking',
-            notificationText: 'enabled',
-            debug: true,
+            notificationTitle: 'Snap Taxi',
+            notificationText: 'Рабоает в фоновом режиме',
+            debug: false,
             startOnBoot: false,
             stopOnTerminate: true,
             locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
@@ -68,15 +71,15 @@ const MainScreenController = ({
                 lat: `${latitude}`,
                 lng: `${longitude}`,
             });
-            // setTimeout(() => {
-            //     Linking.openURL('snapDriver://booking');
-            // }, 2000);
+
+
             console.log('GOT THE LOCATION');
 
             BackgroundGeolocation.startTask((taskKey) => {
                 // execute long running task
                 // eg. ajax post location
                 // IMPORTANT: task has to be ended by endTask
+
                 BackgroundGeolocation.endTask(taskKey);
             });
         });
@@ -132,21 +135,14 @@ const MainScreenController = ({
         });
 
         BackgroundGeolocation.on('background', () => {
-            console.log('[INFO] App is in background');
-            // Linking.canOpenURL('snapDriver://booking').then((e) => {
-
-            // });
-
-            LaunchApplication.open('com.snapdriver');
-
-            setTimeout(() => {
-                console.log('fuck');
-
-                // Linking.sendIntent('snapDriver://booking');
-            }, 5000);
+            // BackgroundTimer.runBackgroundTimer(() => {
+            //     console.log('fuck')
+            // }, 3000);
+            console.log('[INFO] App is in background')
         });
 
         BackgroundGeolocation.on('foreground', () => {
+            // BackgroundTimer.stopBackgroundTimer();
             console.log('[INFO] App is in foreground');
         });
 
@@ -176,7 +172,7 @@ const MainScreenController = ({
             );
             console.log(
                 '[INFO] BackgroundGeolocation auth status: ' +
-                    status.authorization,
+                status.authorization,
             );
 
             // you don't need to check status before start (this is just the example)
